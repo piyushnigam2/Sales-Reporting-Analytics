@@ -84,6 +84,7 @@ def create_comp():
     y1 = Comp_Data.No_of_Deals
 
     ax.bar(x1, y1, color = "#304C89")
+    ax.get_children()[0].set_color('g')
 
     plt.xticks(rotation = 0, size = 10)
     plt.xlabel("Competitor Name")
