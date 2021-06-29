@@ -19,6 +19,7 @@ ECS_data = pd.read_csv("/home/Piyush2/mysite/Client_Progress_Data.csv")
 #from GetFixtures2 import GK_roi
 GK_roi = pd.read_csv("/home/Piyush2/mysite/Client_Progress_Data.csv")
 Comp_Data = pd.read_csv("/home/Piyush2/mysite/Deals_Competitor.csv")
+Monthly_Deals = pd.read_csv("/home/Piyush2/mysite/Monthly_Deals.csv")
 
 
 app = Flask(__name__)
@@ -69,27 +70,55 @@ def mpl1():
 
 @app.route('/plot1.png')
 def plot1_png():
-    fig1 = create_line()
+    fig1 = create_comp()
     output1 = io.BytesIO()
     FigureCanvas(fig1).print_png(output1)
     return Response(output1.getvalue(), mimetype='image/png')
 
 
-def create_line():
+def create_comp():
     fig, ax = plt.subplots(figsize = (14,6))
     fig.patch.set_facecolor('#E8E5DA')
 
     x1 = Comp_Data.Competitor_Name
     y1 = Comp_Data.No_of_Deals
 
-    plt.plot(x1, y1, '-.')
+    ax.bar(x1, y1, color = "#304C89")
 
+    plt.xticks(rotation = 0, size = 10)
     plt.xlabel("Competitor Name")
     plt.ylabel("Deals this month")
     plt.title('Sales Deals this month')
 
     return fig
 
+#Matplotlib page
+@app.route('/monthwise', methods=("POST", "GET"))
+def mpl2():
+    return render_template('monthwise.html',
+                           PageTitle = "Monthly Deals")
+
+@app.route('/plot2.png')
+def plot2_png():
+    fig2 = create_line()
+    output2 = io.BytesIO()
+    FigureCanvas(fig2).print_png(output2)
+    return Response(output2.getvalue(), mimetype='image/png')
+
+
+def create_line():
+    fig, ax = plt.subplots(figsize = (14,6))
+    fig.patch.set_facecolor('#E8E5DA')
+
+    x2 = Monthly_Deals.Month
+    y2 = Monthly_Deals.No_of_Deals
+
+    plt.plot(x2, y2, marker='o')
+    plt.xlabel("Months")
+    plt.ylabel("Number of Deals")
+    plt.title('Month-wise Sales report - 2021')
+
+    return fig
 
 if __name__ == '__main__':
     app.run(debug = True)
